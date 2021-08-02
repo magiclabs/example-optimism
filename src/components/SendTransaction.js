@@ -14,8 +14,8 @@ export default function SendTransaction({ web3, network, publicAddress, fetchBal
       from: publicAddress,
       to: toAddress,
       value: web3.utils.toWei(amount),
-      gas: network === 'ethereum' ? web3.eth.getBlock("latest").gasLimit : 820000,
-      gasPrice: network === 'ethereum' ? await web3.eth.getGasPrice() : 15000000
+      gas: network === 'ethereum' ? 21000 : 820000,
+      gasPrice: network === 'ethereum' ? await web3.eth.getGasPrice() : 15000000 // gasPrice for Optimism transactions should be set to 15000000
     });
     setTxnHash(transactionHash);
     enableForm();

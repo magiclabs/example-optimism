@@ -1,34 +1,31 @@
+
 # Resources
-- [GitHub Repo](https://github.com/magiclabs/magic-polygon)
-- [Demo](https://magic-polygon.vercel.app/login)
+- [GitHub Repo](https://github.com/magiclabs/example-optimism-guide)
+- [Demo](https://magic-optimism.vercel.app/login)
 
 # Quick Start
 
 ```
-$ git clone https://github.com/magiclabs/magic-polygon.git
-$ cd magic-polygon
-$ mv .env.local .env // enter your Magic Publishable Key (from https://dashboard.magic.link)
+$ git clone https://github.com/magiclabs/example-optimism-guide.git
+$ cd example-optimism-guide
+$ mv .env.local .env // enter your TEST API Key (from https://dashboard.magic.link)
 $ yarn install
 $ yarn start
 ```
 
 # Introduction
 
-With the rising gas costs on Ethereum, many developers are looking towards scaling solutions to help with both improved transaction speed, as well as cheaper gas costs for users. Polygon (formerly Matic) is one such solution. 
+## What is Optimism
 
-Polygon is a protocol which enables connecting Ethereum-compatible blockchains, and is also a Proof of Stake side-chain scaling solution for Ethereum. The side-chain runs alongside Ethereum's blockchain, and processes transactions before finalizing them on Ethereum.
+[Optimism](https://optimism.io) (aka Optimistic Ethereum) is a new Layer 2 scaling solution for Ethereum. It uses "optimistic rollups" technology where transactions are submitted directly to the L2, "rolled up" into a single proof, then sent to the layer one chain (Ethereum) to be verified. With smart contract computations being done on L2 rather than L1, it allows for significantly faster and cheaper transactions.
 
-With Magic, developers can connect to Polygon by simply specifying the network URL when initiating a Magic instance. This guide will show how you can create a web3-enabled app, allow users to switch between Ethereum and Polygon networks, call smart contracts, and send transactions. 
+Optimism is also interoperable with Ethereum and the Ethereum Virtual Machine (EVM) so smart contracts can easily be depolyed on Optimism without much/any refactoring.
 
-_Note: `ETH` is the native token to Ethereum, `MATIC` is the native token to Polygon._
+With Magic, developers can connect to the Optimism network by simply specifying the network URL when initiating a Magic instance. This guide will show how you can create a web3-enabled app, allow users to switch between the Ethereum and Optimism networks, call smart contracts, and send transactions. 
 
-# Tutorial
+## Connecting to Ethereum / Optimism
 
-_Note: this app was bootstrapped with the `npx make-magic` React template._
-
-## Connecting to Ethereum / Polgyon
-
-In `magic.js`, we will need two `Magic` and two `Web3` instances, one for each network, since we're allowing users to switch between the two. If you're only interested in connecting to Polygon, then only one instance of `Magic` and `Web3` should be created. We also are adding `magicEthereum.network = "ethereum"` to be able to identify the Magic network we're creating.
+In `magic.js`, we will need two `Magic` and two `Web3` instances, one for each network, since we're allowing users to switch between the two. If you're only interested in connecting to Optimism, then only one instance of `Magic` and `Web3` should be created. We also are adding `magicEthereum.network = 'ethereum'` to be able to identify the Magic network we're creating.
 
 You’ll use the same API key for both `Magic` instances so that the user’s public address does not change. 
 
@@ -36,46 +33,48 @@ You’ll use the same API key for both `Magic` instances so that the user’s pu
 import { Magic } from 'magic-sdk';
 import Web3 from 'web3';
 
-/** 
- * NOTE: when connecting to a testnet, TEST API keys must be used from the Magic dashboard (live API keys for eth mainnet)
- */
-
 const customNodeOptions = {
-  rpcUrl: 'https://rpc-mumbai.matic.today',
-  chainId: 80001
+  rpcUrl: 'https://kovan.optimism.io',
+  chainId: 69
 }
 
-// Setting network to Matic
-export const magicMatic = new Magic(process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY, { network: customNodeOptions });
-magicMatic.network = "matic"
+// Setting network to Optimism Testnet
+export const magicOptimism = new Magic(process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY, { network: customNodeOptions });
+magicOptimism.network = 'optimism'
 
-export const maticWeb3 = new Web3(magicMatic.rpcProvider);
+export const web3Optimism = new Web3(magicOptimism.rpcProvider);
+
+/** 
+ * NOTE: when connecting to a testnet, TEST API keys must be used from the Magic dashboard (live API keys for mainnet)
+ */
 
 // Setting network to Ethereum (Ropsten Testnet)
-export const magicEthereum = new Magic(process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY, { network: 'ropsten' });
-magicEthereum.network = "ethereum"
+export const magicEthereum = new Magic(process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY, { network: 'kovan' });
+magicEthereum.network = 'ethereum'
 
-export const ethWeb3 = new Web3(magicEthereum.rpcProvider);
+export const web3Ethereum = new Web3(magicEthereum.rpcProvider);
 ```
 
 ## Switching Between Networks
 
-Users are able to switch between the Ethereum and Polygon networks with the `select` element dropdown list. Since one `Magic` instance points towards Ethereum, and the other Polygon, we simply update the instance that we’re using for our app based on whichever network the user selects.
+Users are able to switch between the Ethereum and Optimism networks with the `select` element dropdown list. Since one `Magic` instance points towards Ethereum, and the other Optimism, we simply update the instance that we’re using for our app based on whichever network the user selects.
 
 ```js
-import { magicEthereum, magicMatic, ethWeb3, maticWeb3 } from "../magic";
+import { magicEthereum, magicOptimism } from '../magic';
+
+  const [magic, setMagic] = useState(magicEthereum);
 
   const handleChangeNetwork = (e) => {
-    e.target.value === 'ethereum' ? setMagic(magicEthereum) : setMagic(magicMatic);
+    e.target.value === 'ethereum' ? setMagic(magicEthereum) : setMagic(magicOptimism);
     fetchBalance(userMetadata.publicAddress);
     fetchContractMessage();
   }
 
   return (
-    <div className="info">
-      <select name="network" onChange={(e) => handleChangeNetwork(e)}>
-        <option value="ethereum">Ethereum (Ropsten Testnet)</option>
-        <option value="matic">Matic (Mumbai Testnet)</option>
+    <div className='info'>
+      <select name='network' onChange={(e) => handleChangeNetwork(e)}>
+        <option value='ethereum'>Ethereum Testnet (Kovan)</option>
+        <option value='optimism'>Optimism Testnet</option>
       </select>
     </div>
   )
@@ -83,7 +82,7 @@ import { magicEthereum, magicMatic, ethWeb3, maticWeb3 } from "../magic";
 
 ## Viewing User Balance
 
-A user's public address will be the same on both Ethereum and Polygon (as long as you are using the same API key for each instance) so a simple `web3.eth.getBalance` call is all that is needed for either network. Because the native token of Ethereum is `ETH`, and for Polygon is `MATIC`, we're displaying the appropriate token symbol based on the network we're connected to.
+A user's public address will be the same on both Ethereum and Optimism (as long as you are using the same API key for each instance) so a simple `web3.eth.getBalance` call is all that is needed for either network.
 
 ```js
 const fetchBalance = (address) => {
@@ -93,24 +92,30 @@ const fetchBalance = (address) => {
 return (
 <h1>Balance</h1>
 <div className="info">
-  {balance.toString().substring(0, 6)} {magic.network === 'matic' ? 'MATIC' : 'ETH'}
+  {balance.toString().substring(0, 6)} ETH
 </div>
 )
 ```
 
 ## Send Transaction
 
-Sending a transaction is also very simple and the same for either network you're connected to. All that's needed is to provide an amount to send, and  `from` and `to` addresses. If no `gas` or `gasPrice` are explicitly passed in, the gas limit and price will be calculated automatically. Otherwise, the values passed in will be used.
+Sending a transaction is also very simple and similar for both networks. However, an important difference between the two is gas price and gas limit, as those values will be unique to each chain. 
+
+For gas price on Ethereum, you can use `web3.eth.getGasPrice` however for transaction on Optimism, the gas price should be hard-coded to 15000000.
+
+For the gas limit on Ethereum, you can hard-code in 21000, and transactions on Optimism need to be sent with a minimum of 820000.
 
 ```js
-const web3 = magic.network === "ethereum" ? ethWeb3 : maticWeb3;
+const web3 = magic.network === "ethereum" ? web3Ethereum : web3Optimism;
 
 const sendTransaction = async () => {
   if (!toAddress || !amount) return;
-  const receipt = await web3.eth.sendTransaction({
+  const { transactionHash } = await web3.eth.sendTransaction({
     from: publicAddress,
     to: toAddress,
-    value: web3.utils.toWei(amount)
+    value: web3.utils.toWei(amount),
+    gas: network === 'ethereum' ? 21000 : 820000,
+    gasPrice: network === 'ethereum' ? await web3.eth.getGasPrice() : 15000000
   });
 }
 
@@ -136,21 +141,31 @@ return (
 
 ## Calling Smart Contracts
 
-Separate smart contracts will need to be deployed on each Ethereum and Polygon for your users to interact with them. So you'll also need to dynamically know the correct address that the contract is deployed to in order to call it. 
+Separate smart contracts will need to be deployed on each Ethereum and Optimism for your users to interact with them, so you'll need to know the address of each in order to call it. 
 
 ```js
-const network = magic.network === "ethereum" ? 'ethereum' : 'matic';
-const ropstenContractAddress = '0x8cb46E4bFc14Ce010dFbE5Ecb61BA64d798D3A67';
-const maticContractAddress = '0x9ebE0B009146643bb3560375A4562D8d89E135e9';
-const contract = new web3.eth.Contract(abi, network === "ethereum" ? ropstenContractAddress : maticContractAddress);
+const [message, setMessage] = useState('...');
+const [newMessage, setNewMessage] = useState('');
+const network = magic.network === 'ethereum' ? 'ethereum' : 'optimism';
+const ethContractAddress = '0x62cB21dF5D7d6F6B9157C6aB27A2178fB180Ca20';
+const optimismContractAddress = '0x62cB21dF5D7d6F6B9157C6aB27A2178fB180Ca20';
+const contract = new web3.eth.Contract(abi, network === 'ethereum' ? ethContractAddress : optimismContractAddress);
 
 // Grabbing `message` variable value stored in the smart contract
-const fetchContractMessage = () => contract.methods.message().call().then(setMessage)
+const fetchContractMessage = () => contract.methods.message().call().then(setMessage);
 
 // Update contract `message` value on the blockchain
 const updateContractMessage = async () => {
   if (!newMessage) return;
-  const receipt = await contract.methods.update(newMessage).send({ from: user.publicAddress });
+
+  // Estimate Gas Limit
+  let gasLimit = await contract.methods.update(newMessage).estimateGas({});
+
+  const { transactionHash } = await contract.methods.update(newMessage).send({ 
+    from: publicAddress, 
+    gas: gasLimit,
+    gasPrice: network === 'ethereum' ? await web3.eth.getGasPrice() : 15000000
+  });
 }
 
 return (
@@ -170,4 +185,4 @@ return (
 
 ## Done
 
-That's all there is to it! You've now got an app that allows users to create a wallet with just their email, and connect to multiple networks within your app.
+That's all there is to it! You've now got an app that allows users to create a wallet with just their email, and connect to the Optimism L2 and Ethereum networks within your app.

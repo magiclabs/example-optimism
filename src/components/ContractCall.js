@@ -10,10 +10,14 @@ export default function ContractCall({ web3, network, publicAddress, fetchBalanc
   const updateContractMessage = async () => {
     if (!newMessage) return;
     disableForm();
+
+    // Estimate Gas Limit
+    let gasLimit = await contract.methods.update(newMessage).estimateGas({});
+
     const { transactionHash } = await contract.methods.update(newMessage).send({ 
       from: publicAddress, 
-      gas: network === 'ethereum' ? web3.eth.getBlock("latest").gasLimit : 870000,
-      gasPrice: network === 'ethereum' ? await web3.eth.getGasPrice() : 15000000
+      gas: gasLimit,
+      gasPrice: network === 'ethereum' ? await web3.eth.getGasPrice() : 15000000 // gasPrice for Optimism transactions should be set to 15,000,000
     });
     setTxnHash(transactionHash);
     enableForm();
