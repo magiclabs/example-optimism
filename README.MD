@@ -1,13 +1,13 @@
 
 # Resources
-- [GitHub Repo](https://github.com/magiclabs/example-optimism-guide)
+- [GitHub Repo](https://github.com/magiclabs/example-optimism)
 - [Demo](https://magic-optimism.vercel.app/login)
 
 # Quick Start
 
 ```
-$ git clone https://github.com/magiclabs/example-optimism-guide.git
-$ cd example-optimism-guide
+$ git clone https://github.com/magiclabs/example-optimism.git
+$ cd example-optimism
 $ mv .env.local .env // enter your TEST API Key (from https://dashboard.magic.link)
 $ yarn install
 $ yarn start
