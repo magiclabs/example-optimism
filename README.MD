@@ -8,7 +8,7 @@
 ```
 $ git clone https://github.com/magiclabs/example-optimism.git
 $ cd example-optimism
-$ mv .env.local .env // enter your TEST API Key (from https://dashboard.magic.link)
+$ mv .env.example .env // enter your TEST API Key (from https://dashboard.magic.link)
 $ yarn install
 $ yarn start
 ```
