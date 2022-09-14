@@ -51,7 +51,7 @@ export default function ContractCall({ web3, network, publicAddress, fetchBalanc
           {
           txnHash &&
             <div className='info'>
-              <a href={network === 'ethereum' ? `https://kovan.etherscan.io/tx/${txnHash}` : `https://kovan-optimistic.etherscan.io/tx/${txnHash}`} target='_blank'>
+              <a href={network === 'ethereum' ? `https://goerli.etherscan.io/tx/${txnHash}` : `https://goerli-optimism.etherscan.io/tx/${txnHash}`} target='_blank'>
                 View Transaction
               </a> ↗️
             </div>
