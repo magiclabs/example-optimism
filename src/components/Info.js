@@ -21,7 +21,7 @@ export default function Info({ user, magic, handleChangeNetwork, balance }) {
           <h1>Network</h1>
           <div className='info'>
             <select name='network' onChange={(e) => handleChangeNetwork(e)}>
-              <option value='ethereum'>Ethereum Testnet (Kovan)</option>
+              <option value='ethereum'>Ethereum Testnet (Goerli)</option>
               <option value='optimism'>Optimism Testnet</option>
             </select>
           </div>
@@ -29,7 +29,7 @@ export default function Info({ user, magic, handleChangeNetwork, balance }) {
           <div className='info'>{user.publicAddress}</div>
           <h1>Balance</h1>
           <div className='info'>{balance.toString().substring(0, 6)} ETH</div>
-          <div><a href='https://linkfaucet.protofire.io/kovan' target='_blank'>Get Test ETH ↗️</a></div>
+          <div><a href='https://goerlifaucet.com/' target='_blank'>Get Test ETH ↗️</a></div>
           <div><a href='https://gateway.optimism.io/' target='_blank'>Ethereum / Optimism Bridge ↗️</a></div>
         </div>
     </>

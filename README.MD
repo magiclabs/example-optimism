@@ -34,23 +34,32 @@ import { Magic } from 'magic-sdk';
 import Web3 from 'web3';
 
 const customNodeOptions = {
-  rpcUrl: 'https://kovan.optimism.io',
-  chainId: 69
-}
+  rpcUrl: 'https://goerli.optimism.io/',
+  chainId: 420,
+};
 
 // Setting network to Optimism Testnet
-export const magicOptimism = new Magic(process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY, { network: customNodeOptions });
-magicOptimism.network = 'optimism'
+export const magicOptimism = new Magic(
+  process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY, 
+  { 
+    network: customNodeOptions,
+  },
+);
+magicOptimism.network = 'optimism';
 
 export const web3Optimism = new Web3(magicOptimism.rpcProvider);
 
-/** 
- * NOTE: when connecting to a testnet, TEST API keys must be used from the Magic dashboard (live API keys for mainnet)
- */
-
-// Setting network to Ethereum (Ropsten Testnet)
-export const magicEthereum = new Magic(process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY, { network: 'kovan' });
-magicEthereum.network = 'ethereum'
+// Setting network to Ethereum via Custom Node (Goerli Testnet)
+export const magicEthereum = new Magic(
+  process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY, 
+  { 
+    network: {
+      rpcURL: `https://eth-goerli.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
+      chainId: 5,
+    },
+  },
+);
+magicEthereum.network = 'ethereum';
 
 export const web3Ethereum = new Web3(magicEthereum.rpcProvider);
 ```
@@ -73,7 +82,7 @@ import { magicEthereum, magicOptimism } from '../magic';
   return (
     <div className='info'>
       <select name='network' onChange={(e) => handleChangeNetwork(e)}>
-        <option value='ethereum'>Ethereum Testnet (Kovan)</option>
+        <option value='ethereum'>Ethereum Testnet (Goerli)</option>
         <option value='optimism'>Optimism Testnet</option>
       </select>
     </div>
