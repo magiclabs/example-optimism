@@ -17,14 +17,11 @@ magicOptimism.network = 'optimism';
 
 export const web3Optimism = new Web3(magicOptimism.rpcProvider);
 
-// Setting network to Ethereum via Custom Node (Goerli Testnet)
+// Setting network to Ethereum (Goerli Testnet)
 export const magicEthereum = new Magic(
   process.env.REACT_APP_MAGIC_PUBLISHABLE_KEY, 
   { 
-    network: {
-      rpcURL: `https://eth-goerli.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`,
-      chainId: 5,
-    },
+    network: 'goerli',
   },
 );
 magicEthereum.network = 'ethereum';
